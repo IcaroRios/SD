@@ -66,10 +66,7 @@ iniciarFatorial:
 	#AS LINHAS COMENTADAS ABAIXO FAZEM A EXIBIÇÃO DE R5 NA SERIAL, MÁS DE APENAS UM CARACTERE.
 	# É PRECISO SEPARAR OS CARACTERES PARA COLOCAR UM POR UM PARA SEREM EXIBIDOS.
 	
-	#addi r5, r5, 48
-	#mov r4, r5
-	#movia r5, UART0
-	#call nr_uart_txchar
+	call exibir
 	
 	br end
 	
@@ -82,6 +79,24 @@ fatorial:
 	pop r6
 	pop ra
 	mul r5 ,r5, r6
+	ret
+
+exibir:
+	beq r5, r0, return
+	push ra
+	restoDivisao r5,r8, r11
+	div r5, r5, r8
+	push r11
+	#bne r5 ,r0 ,exibir
+	call exibir
+	pop r15
+	
+	addi r15, r15, 48
+	mov r4, r15
+	movia r15, UART0
+	call nr_uart_txchar
+	
+	pop ra
 	ret
 
 return1:
