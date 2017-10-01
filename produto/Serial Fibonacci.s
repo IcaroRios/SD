@@ -28,7 +28,7 @@ main:
 	mov r6, r0# este irá ficar acumulando o valor que eu desejo.
 	movi r8, 10#constante enter #também sera a constante para divisao
 	movi r10, -1 #constante -1
-	mov r15, r0 #meus valores a serem exibidos na serial
+	mov r12, r0 #meus valores a serem exibidos na serial
 	mov r11,r0 #resto
 	
 	br receive
@@ -89,11 +89,11 @@ exibir:
 	push r11
 	#bne r5 ,r0 ,exibir
 	call exibir
-	pop r15
+	pop r12
 	
-	addi r15, r15, 48
-	mov r4, r15
-	movia r15, UART0
+	addi r12, r12, 48
+	mov r4, r12
+	movia r12, UART0
 	call nr_uart_txchar
 	
 	pop ra
