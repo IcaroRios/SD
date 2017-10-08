@@ -21,7 +21,7 @@
 .endm
 
 main:	
-	mov r11, r11# este irá ficar acumulando o valor que eu desejo.
+	#mov r11, r11# este irá ficar acumulando o valor que eu desejo.
 	movi r8, 10 #constante enter #também sera a constante para divisao
 	movi r10, -1 #constante -1
 	mov r15,r0 #resto
