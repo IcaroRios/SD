@@ -1,3 +1,8 @@
+###############################################
+# Example: bissexto.s
+# verificar se ano eh bissexto
+###############################################
+
 .data
 .equ UART0, 0x860
 
@@ -20,16 +25,15 @@
 	sub \resto, \operadorA, \resto
 .endm
 
-
-main:
+main: 
 	mov r6, r0# este irá ficar acumulando o valor que eu desejo.
 	movi r8, 10#constante enter #também sera a constante para divisao
 	movi r10, -1 #constante -1
 	mov r15, r0 #meus valores a serem exibidos na serial
 	mov r11,r0 #resto
-	
 	br receive
-
+	#call iniciar
+	
 receive:
 	movia r4, UART0		
 	call nr_uart_rxchar
@@ -42,7 +46,7 @@ receive:
 
 #VERIFICA SE O VALOR FOI DIFERENTE DE -1
 verificarRecebimento:
-	beq r2, r8, bissexto
+	beq r2, r8, iniciar
 	bne r2, r10, manipular
 	ret
 
@@ -55,63 +59,52 @@ manipular:
 	add r6, r6,r2
 	ret
 	
-bissexto:		
-		
-		#movi r6, 2012		#r1 = 5 ANO (D) #valor que quero calcular se é bissexto
-
-		call divisivel4
-		call divisivel400
-		
-		or r10, r5, r7
-		addi r5, r5, 48
-		mov r4, r5
-		movia r5, UART0
-		call nr_uart_txchar
-		br end 				#fim da rotina
-		
-divisivel4: #verifica se é divisivel por 4
-
-		movi r2, 4			#r2 = 4	(d)
-		div r3, r6, r2			#r3 = r1/r2 (p) resultado da divisao do ano por 4
-		mul r4, r3, r2			#r4 = r3*4 produto da divisao multiplicado pelo divisor (p*d)
-		sub r4, r6, r4  		#r4 = D - (p*d) resto da divisao do ano por 4
-		beq r4, r0, divisivel100 	#se r4 for igual a 0 ele executa func
-				
-		ret				#se nao for divisivel por 4 retorna
-
-		
-divisivel100: #verifica se não é divisivel por 100
-
-	movi r2, 100			#r2 = 4	(d)
-	div r3, r6, r2			#r3 = r1/r2 (p) resultado da divisao do ano por 100
-	mul r4, r3, r2			#r4 = r3*100 produto da divisao multiplicado pelo divisor (p*d)
-	sub r4, r6, r4  		#r4 = D - (p*d) resto da divisao do ano por 100
-	bne r4, r0, atribuivalorr6	#se r4 for diferente de 0 ele executa func
 	
-	#movi r6, 0
 	
-	ret				#se for divisivel por 100 retorna
+iniciar:
+	#movi r11, 2000 		#declaracao do ano #####
+	movi r12, 400		#declaracao divisor 400
+	movi r16, 4		#declaracao divisor 4
+	movi r7, 100		#declaracao divisor 100
+	
+	div r8, r6, r12		#dividindo ano por 400 e analisando o resto
+	mul r9, r8, r12
+	sub r9, r6, r9
+	
+	beq r9, r0, finalVerdadeiro	#retornos para o registrador 10
+	bne r9, r0, retornoFalso
+	
+retornoFalso:
+	div r8, r6, r16		#dividindo ano por 4 e analisando resto
+	mul r9, r8, r16
+	sub r9, r6, r9
+	
+	beq r9, r0, divisaoPorCem	#ultimo passo
+	bne r9, r0, finalFalso		#ano nao eh bissexto
 
-atribuivalorr6:
-	movi r5, 1
-	ret
+divisaoPorCem:
+	div r8, r1, r7 		#dividindo ano por 100 e analisando resto
+	mul r9, r8, r7
+	sub r9, r1, r9
+	
+	beq r9, r0, finalFalso
+	bne r9, r0, finalVerdadeiro
 
-
-divisivel400: #verifica se é divisivel por 400
+finalVerdadeiro:
+	movi r13, 1 ##############
+	addi r13, r13, 48
+	mov r4, r13
+	movia r5, UART0
+	call nr_uart_txchar
+	call end
 	
-	movi r2, 400			#r2 = 4	(d)
-	div r3, r1, r2			#r3 = r1/r2 (p) resultado da divisao do ano por 400
-	mul r4, r3, r2			#r4 = r3*400 produto da divisao multiplicado pelo divisor (p*d)
-	sub r4, r6, r4  		#r4 = D - (p*d) resto da divisao do ano por 400
-	beq r4, r0, atribuirvalorr7 	#se r4 for igual a 0 ele executa func
+finalFalso:
+	movi r13, 0
+	addi r13, r13, 48
+	mov r4, r13
+	movia r13, UART0
+	call nr_uart_txchar
+	call end
 	
-	#movi r7, 0
-	
-	ret
-	
-atribuirvalorr7:
-	movi r7, 1
-	ret
- 
-end: #Fim do programa
-	.end
+end:
+	br end
