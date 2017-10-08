@@ -74,48 +74,44 @@ manipular:
 	ret
 	
 primo:
-	#movi r13, 2
-	#movi r14, 13
+
 	movi r16, 0
 	movi r17, 2
 	movi r18, 0
 	movi r19, 1
-	#sub r15, r14, r13	
+	
 	sub r15, r6, r20
 
 		
 loop1:
 	blt r15, r16, end
-	#cmpeqi r18, r13, 2
+
 	cmpeqi r18, r20, 2
 	call loop2
 	movi r17, 2
 	addi r16, r16, 1
-	beq r18, r19, print
-	#addi r13, r13, 1
+	beq r18, r19, exibir
+
 	addi r20, r20, 1
 	br loop1
 	
 loop2:
-	#bge r17, r13, endloop2
-	bge r17, r20, endloop2
-	#restoDivisao r13, r17, r9
+	
+	bge r17, r20, return
+
 	restoDivisao r20, r17, r9
 	beq r9, r0, else
 	movi r18, 1
 	addi r17, r17, 1
 	br loop2
 	
-endloop2:
-	ret
 
 else:
 	movi r18, 0
 	ret
-print:
-	#push r13 #devo exibir os valores aqui.
+exibir:	
 	mov r5,r20
-	call exibir
+	call exibirSerial
 	movi r12, 44
 	mov r4, r12
 	movia r12, UART0
@@ -123,14 +119,13 @@ print:
 	addi r20, r20, 1
 	br loop1
 
-exibir:
+exibirSerial:
 	beq r5, r0, return
 	push ra
 	restoDivisao r5,r8, r11
 	div r5, r5, r8
-	push r11
-	#bne r5 ,r0 ,exibir
-	call exibir
+	push r11	
+	call exibirSerial
 	pop r12
 	
 	addi r12, r12, 48

@@ -62,10 +62,7 @@ iniciarFatorial:
 	movi r2,1	#const
 	#movi r4, 5
 	call fatorial
-	
-	#AS LINHAS COMENTADAS ABAIXO FAZEM A EXIBIÇÃO DE R5 NA SERIAL, MÁS DE APENAS UM CARACTERE.
-	# É PRECISO SEPARAR OS CARACTERES PARA COLOCAR UM POR UM PARA SEREM EXIBIDOS.
-	
+		
 	call exibir
 	
 	br end
@@ -87,7 +84,6 @@ exibir:
 	restoDivisao r5,r8, r11
 	div r5, r5, r8
 	push r11
-	#bne r5 ,r0 ,exibir
 	call exibir
 	pop r12
 	
