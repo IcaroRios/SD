@@ -63,7 +63,7 @@ inicio:
 	movi r16,1
 	movi r7, 1
 
-while:
+for:
 	bge r11, r7, start
 	br end
 
@@ -82,15 +82,15 @@ start:
 	#####
 	
 	addi r7, r7, 1
-	br while
+	br for
 	
 fibonacci:
 	pop r16
-	bgt r16, r3, do
+	bgt r16, r3, else
 	add r9, r9, r16
 	ret
 
-do:
+else:
 	push ra
 	subi r6, r16, 1
 	push r6
